@@ -1,11 +1,11 @@
 package com.masai.ui;
 import java.util.Scanner;
 
-//import com.masaischool.dao.LoggedINUser;
+import com.masai.dao.LoggedInUser;
+
+
 
 public class Main {
-//	private static ProductUI productUI;
-//	private static UserUI userUI;
 
 	static void displayAdminMenu() {
 		System.out.println("1. Add new Department");
@@ -13,9 +13,10 @@ public class Main {
 		System.out.println("3. Update a department name");
 		System.out.println("4. Add new Employee");
 		System.out.println("5. Change department of employee");
-		System.out.println("6.Approve or deny Leave request");
-		System.out.println("7.fire an employee");
-		System.out.println("0.logout");
+		System.out.println("6. Approve or deny Leave request");
+		System.out.println("7. fire an employee");
+		System.out.println("8. view all users");
+		System.out.println("0. logout");
 	}
 	
 	static void adminMenu(Scanner sc) {
@@ -26,7 +27,7 @@ public class Main {
 			choice = sc.nextInt();
 			switch(choice) {
 				case 0:
-					System.out.println("Bye Bye admin");
+					System.out.println("admin logout successfully");
 					break;
 				case 1:
 					DepartmentUI.addDepartment(sc);
@@ -38,17 +39,20 @@ public class Main {
 					DepartmentUI.updateDepartment(sc);
 					break;
 				case 4:
-//					categoryUI.deleteCategory();
+					UserUI.addUser(sc);
 					break;
 				case 5:
-//					categoryUI.searchCategoriesByName();
+					UserUI.changeDeptOfEmloyee(sc);
 					break;
 				case 6:
 //					categoryUI.searchCategoryById();
 					break;
 				case 7:
-//					productUI.viewProductsByCategoryId();
+					UserUI.deleteEmployeeByAdmin(sc);
 					break;
+				case 8:
+					UserUI.viewAllUser();
+					break;	
 				default:
 					System.out.println("Invalid Selection, try again");
 			}
@@ -68,66 +72,70 @@ public class Main {
 		}
 	}
 	
-	static void displayCustomerMenu() {
-		System.out.println("1. View All Products");
-		System.out.println("2. Purchase a Product");
-		System.out.println("3. View Order History");
-		System.out.println("4. Update My Name");
-		System.out.println("5. Update My Password");
-		System.out.println("6. Delete My Account");
+	static void displayEmployeeMenu() {
+		System.out.println("1. update employee details");
+		System.out.println("2. change password");
+		System.out.println("3. apply for leave");
+		System.out.println("4. status of the leave");
+		System.out.println("5. history of the leave");
+		System.out.println("6. total salary of the month");
+		System.out.println("7. Annual salary of the financial year");
+		System.out.println("8. Delete account");
 		System.out.println("0. Logout");
 	}
 	
-//	static void customerLogin(Scanner sc) {
-//		if(!userUI.login())
-//			return;
-//
-//		//you are here means login is successful
-//		int choice = 0;
-//		do {
-//			displayCustomerMenu();
-//			System.out.print("Enter selection ");
-//			choice = sc.nextInt();
-//			switch(choice) {
-//				case 1:
-//					productUI.viewAllProducts();
-//					break;
-//				case 2:
-//					orderUI.purchaseProduct();
-//					break;
-//				case 3:
+	static void employeeLogin(Scanner sc) {
+		if(!UserUI.login(sc))
+			return;
+
+		//you are here means login is successful
+		int choice = 0;
+		do {
+			displayEmployeeMenu();
+			System.out.print("Enter selection ");
+			choice = sc.nextInt();
+			switch(choice) {
+				case 1:
+					UserUI.updateNameOfEmployee(sc);
+					break;
+				case 2:
+					UserUI.changePassword(sc);
+					break;
+				case 3:
 //					orderUI.viewOrderDetails();
-//					break;
-//				case 4:
+					break;
+				case 4:
 //					userUI.updateNameOfUser();
-//					break;
-//				case 5:
+					break;
+				case 5:
 //					userUI.changePassword();
-//					break;
-//				case 6:
-//					userUI.deleteUser();
-//					try{
-//						Thread.sleep(2000);
-//					}catch(InterruptedException ex) {
-//						
-//					}
-//					//no break statement here i.e. after deletion of user account, logout will also take place
-//				case 0:
-//					userUI.logout();
-//					break;
-//				default:
-//					System.out.println("Invalid Selection, try again");
-//			}
-//		}while(LoggedINUser.loggedInUserId != 0);
-//	}
-//	
+					break;
+				case 6:
+					UserUI.monthSalary();
+					break;
+				case 7:
+					UserUI.annualSalary();
+					break;	
+				case 8:
+					UserUI.deleteEmployee();
+					try{
+						Thread.sleep(2000);
+					}catch(InterruptedException ex) {
+						
+					}
+					//no break statement here i.e. after deletion of user account, logout will also take place
+				case 0:
+					UserUI.logout();
+					break;
+				default:
+					System.out.println("Invalid Selection, try again");
+			}
+		}while(LoggedInUser.LoggedInUserId != 0);
+	}
+	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-//		categoryUI = new CategeryUI(sc);
-//		productUI = new ProductUI(sc);
-//		userUI = new UserUI(sc);
-//		orderUI = new OrderUI(sc);
-//		
+	
 		int choice = 0;
 		do {
 			System.out.println("1. Admin Login\n2. Employee Login\n0. Exit");
@@ -140,7 +148,7 @@ public class Main {
 					adminLogin(sc);
 					break;
 				case 2:
-//					customerLogin(sc);
+					employeeLogin(sc);
 					break;
 				default:
 					System.out.println("Invalid Selection, try again");
