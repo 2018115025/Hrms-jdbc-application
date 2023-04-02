@@ -1,6 +1,7 @@
 package com.masai.ui;
 import java.util.Scanner;
 
+import com.masai.custom.ConsoleColors;
 import com.masai.dao.LoggedInUser;
 
 
@@ -8,27 +9,31 @@ import com.masai.dao.LoggedInUser;
 public class Main {
 
 	static void displayAdminMenu() {
-		System.out.println("1. Add new Department");
-		System.out.println("2. View all Departments");
-		System.out.println("3. Update a department name");
-		System.out.println("4. Add new Employee");
-		System.out.println("5. Change department of employee");
-		System.out.println("6. view all employee leave request");
-		System.out.println("7. Approve or deny Leave request");
-		System.out.println("8. fire an employee");
-		System.out.println("9. view all users");
-		System.out.println("0. logout");
+		
+		System.out.println(ConsoleColors.YELLOW_BOLD_BRIGHT+
+				"+----------------------------------------+"+"\n"
+			   +"| 1. Add new Department                  |"+"\n"
+			   +"| 2. View all Departments                |"+"\n"
+		       +"| 3. Update a department name            |"+"\n" 
+		       +"| 4. Add new Employee                    |"+"\n" 
+		       +"| 5. Change department of employee       |"+"\n" 
+		       +"| 6. view all employee leave request     |"+"\n" 
+		       +"| 7. Approve or deny Leave request       |"+"\n" 
+		       +"| 8. fire an employee                    |"+"\n" 
+		       +"| 9. view all users                      |"+"\n" 
+		       +"| 0. Logout                              |"+"\n" 
+			   +"+----------------------------------------+"+ConsoleColors.RESET);
 	}
 	
 	static void adminMenu(Scanner sc) {
 		int choice = 0;
 		do {
 			displayAdminMenu();
-			System.out.print("Enter selection ");
+			System.out.print(ConsoleColors.CYAN_BOLD_BRIGHT+"Enter selection "+ConsoleColors.RESET);
 			choice = sc.nextInt();
 			switch(choice) {
 				case 0:
-					System.out.println("admin logout successfully");
+					System.out.println(ConsoleColors.GREEN_BACKGROUND_BRIGHT+"admin logout successfully"+ConsoleColors.RESET);
 					break;
 				case 1:
 					DepartmentUI.addDepartment(sc);
@@ -58,34 +63,40 @@ public class Main {
 					UserUI.viewAllUser();
 					break;	
 				default:
-					System.out.println("Invalid Selection, try again");
+					System.out.println(ConsoleColors.RED_BACKGROUND_BRIGHT+"Invalid Selection, try again"+ConsoleColors.RESET);
 			}
 		}while(choice != 0);
 	}
 	
 	static void adminLogin(Scanner sc) {
-		System.out.print("Enter username ");
+		System.out.println(ConsoleColors.CYAN_BOLD_BRIGHT+"Please Login to your account");
+		System.out.print("Enter username :  ");
 		String username = sc.next();
-		System.out.print("Enter password ");
+		System.out.print("Enter password : ");
 		String password = sc.next();
 		
 		if(username.equalsIgnoreCase("admin") && password.equalsIgnoreCase("admin")) {
+			System.out.println(ConsoleColors.GREEN_BACKGROUND_BRIGHT+"!! Welcome Admin !!"+ConsoleColors.RESET);
 			adminMenu(sc);
 		}else {
-			System.out.println("Invalid Username and Password");
+			System.out.println(ConsoleColors.RED_BACKGROUND_BRIGHT+"Invalid Username and Password"+ConsoleColors.RESET);
 		}
 	}
 	
 	static void displayEmployeeMenu() {
-		System.out.println("1. update employee details");
-		System.out.println("2. change password");
-		System.out.println("3. apply for leave");
-		System.out.println("4. history of the leave");
-		System.out.println("5. status of the leave");
-		System.out.println("6. total salary of the month");
-		System.out.println("7. Annual salary of the financial year");
-		System.out.println("8. Delete account");
-		System.out.println("0. Logout");
+		System.out.println(ConsoleColors.YELLOW_BOLD_BRIGHT+
+				"+----------------------------------------+"+"\n"
+			   +"| 1. update employee details             |"+"\n"
+			   +"| 2. change password                     |"+"\n"
+		       +"| 3. apply for leave                     |"+"\n" 
+		       +"| 4. history of the leave                |"+"\n" 
+		       +"| 5. status of the leave                 |"+"\n" 
+		       +"| 6. total salary of the month           |"+"\n" 
+		       +"| 7. Annual salary of the financial year |"+"\n" 
+		       +"| 8. Delete account                      |"+"\n" 
+		       +"| 0. Logout                              |"+"\n" 
+			   +"+----------------------------------------+"+ConsoleColors.RESET);
+		
 	}
 	
 	static void employeeLogin(Scanner sc) {
@@ -96,7 +107,7 @@ public class Main {
 		int choice = 0;
 		do {
 			displayEmployeeMenu();
-			System.out.print("Enter selection ");
+			System.out.print(ConsoleColors.CYAN_BOLD_BRIGHT+"Enter selection : ");
 			choice = sc.nextInt();
 			switch(choice) {
 				case 1:
@@ -132,7 +143,7 @@ public class Main {
 					UserUI.logout();
 					break;
 				default:
-					System.out.println("Invalid Selection, try again");
+					System.out.println(ConsoleColors.RED_BACKGROUND_BRIGHT+"Invalid Selection, try again"+ConsoleColors.RESET);
 			}
 		}while(LoggedInUser.LoggedInUserId != 0);
 	}
@@ -142,11 +153,17 @@ public class Main {
 	
 		int choice = 0;
 		do {
-			System.out.println("1. Admin Login\n2. Employee Login\n0. Exit");
+			System.out.println(ConsoleColors.YELLOW_BOLD_BRIGHT+
+					"+----------------------+"+"\n"
+				   +"| 1. Admin Login       |"+"\n"
+				   +"| 2. Employee Login    |"+"\n"
+				   +"| 0. Exit              |"+"\n" 
+				   +"+----------------------+"+ConsoleColors.RESET);
+			
 			choice = sc.nextInt();
 			switch(choice) {
 				case 0:
-					System.out.println("Thank you, Visit again");
+					System.out.println(ConsoleColors.CYAN_BOLD_BRIGHT+"Thank you, Visit again"+ConsoleColors.RESET);
 					break;
 				case 1:
 					adminLogin(sc);
@@ -155,7 +172,7 @@ public class Main {
 					employeeLogin(sc);
 					break;
 				default:
-					System.out.println("Invalid Selection, try again");
+					System.out.println(ConsoleColors.RED_BACKGROUND_BRIGHT+"Invalid Selection, try again"+ConsoleColors.RESET);
 			}
 		}while(choice != 0);
 		sc.close();
