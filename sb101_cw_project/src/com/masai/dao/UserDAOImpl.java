@@ -7,8 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.masai.dto.AllUserDTOImpl;
 import com.masai.dto.DepartmentDTO;
 import com.masai.dto.DepartmentDTOImpl;
+import com.masai.dto.LeaveDTO;
+import com.masai.dto.LeaveDTOImpl;
 import com.masai.dto.UserDTO;
 import com.masai.dto.UserDTOImpl;
 import com.masai.exception.NoRecordFoundException;
@@ -107,14 +110,14 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public List<UserDTO> viewAllUser() throws SomeThingWrongException, NoRecordFoundException {
+	public List<AllUserDTOImpl> viewAllUser() throws SomeThingWrongException, NoRecordFoundException {
 		Connection connection = null;
-		List<UserDTO> list=new ArrayList<>();
+		List<AllUserDTOImpl> list=new ArrayList<>();
 		try {
 			//connect to database
 			connection = DBUtils.connectToDatabase();
 			//prepare the query
-			String INSERT_QUERY = "select name,username,password,salary,joining_date,dept_id from employee where is_deleted=0";
+			String INSERT_QUERY = "select name,username,password,salary,joining_date,dept_name from employee e inner join department d on d.id=e.dept_id where e.is_deleted=0";
 			
 			//get the prepared statement object
 			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
@@ -124,7 +127,10 @@ public class UserDAOImpl implements UserDAO {
 				throw new NoRecordFoundException("employee table is empty");
 			}
 			while(rs.next()) {
-				list.add(new UserDTOImpl(rs.getString(1),rs.getString(2), rs.getString(3), rs.getDouble(4), rs.getDate(5).toLocalDate(), rs.getInt(6)));
+				AllUserDTOImpl AllUserDTO=new AllUserDTOImpl();
+				AllUserDTO.setUserDTO(new UserDTOImpl(rs.getString(1), rs.getString(2), rs.getString(3), rs.getDouble(4), rs.getDate(5).toLocalDate(), 0));
+				AllUserDTO.setDepartmentDTO(new DepartmentDTOImpl(null, rs.getString(6)));
+				list.add(AllUserDTO);
 			}
 		}catch(SQLException ex) {
 			throw new SomeThingWrongException("try again later");
@@ -379,6 +385,170 @@ public class UserDAOImpl implements UserDAO {
 		}
 		return sal;
 		
+	}
+
+	@Override
+	public void applyLeave(LeaveDTO leaveDTO) throws SomeThingWrongException {
+		Connection connection = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String INSERT_QUERY = "insert into leave_table (leave_id,leave_type,no_of_days,user_id) values (?,?,?,?)";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+			
+			//stuff the data in the query
+			ps.setString(1, leaveDTO.getLeave_id());
+			ps.setString(2, leaveDTO.getLeave_type());
+			   ps.setInt(3, leaveDTO.getDays());
+			ps.setInt(4, LoggedInUser.LoggedInUserId);
+			//execute query
+			ps.executeUpdate();
+		}catch(SQLException sqlEx) {
+			throw new SomeThingWrongException("leave cannot applied");
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				
+			}
+		}
+		
+	}
+
+	@Override
+	public List<LeaveDTO> viewAllLeaveRequest() throws SomeThingWrongException, NoRecordFoundException {
+		Connection connection = null;
+		List<LeaveDTO> list=new ArrayList<>();
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String INSERT_QUERY = "select * from leave_table";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+			
+			ResultSet rs= ps.executeQuery();
+			if(DBUtils.isResultSetEmpty(rs)) {
+				throw new NoRecordFoundException("leave table is empty");
+			}
+			while(rs.next()) {
+				list.add(new LeaveDTOImpl(rs.getString(1), rs.getString(2), rs.getInt(3),rs.getString(4),rs.getInt(5)));
+			}
+		}catch(SQLException ex) {
+			throw new SomeThingWrongException("try again later");
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public void approveLeaveRequest(String leave_id,int check) throws SomeThingWrongException, NoRecordFoundException {
+		Connection connection = null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			if(check==1) {
+				PreparedStatement ps = connection.prepareStatement("update leave_table set status='approved' where leave_id=?");
+				ps.setString(1, leave_id);
+				ps.executeUpdate();
+			}
+			else {
+				PreparedStatement ps = connection.prepareStatement("update leave_table set status='denied' where leave_id=?");
+				ps.setString(1, leave_id);
+				ps.executeUpdate();
+			}
+			
+		}catch(SQLException sqlEx) {
+			throw new SomeThingWrongException("leave request not done");
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				
+			}
+		}
+	}
+
+	@Override
+	public List<LeaveDTO> historyOfLeave() throws SomeThingWrongException, NoRecordFoundException {
+		Connection connection = null;
+		List<LeaveDTO> list=new ArrayList<>();
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String INSERT_QUERY = "select * from leave_table where user_id=?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+			ps.setInt(1,LoggedInUser.LoggedInUserId);
+			ResultSet rs= ps.executeQuery();
+			if(DBUtils.isResultSetEmpty(rs)) {
+				throw new NoRecordFoundException("leave table is empty");
+			}
+			while(rs.next()) {
+				list.add(new LeaveDTOImpl(rs.getString(1), rs.getString(2), rs.getInt(3),rs.getString(4),rs.getInt(5)));
+			}
+		}catch(SQLException ex) {
+			throw new SomeThingWrongException("try again later");
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public String statusOfLeave(String leave_id) throws SomeThingWrongException, NoRecordFoundException {
+		Connection connection = null;
+		String ans=null;
+		try {
+			//connect to database
+			connection = DBUtils.connectToDatabase();
+			//prepare the query
+			String INSERT_QUERY = "select status from leave_table where user_id=? and leave_id=?";
+			
+			//get the prepared statement object
+			PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
+			ps.setInt(1,LoggedInUser.LoggedInUserId);
+			ps.setString(2, leave_id);
+			
+			ResultSet rs= ps.executeQuery();
+			
+			if(DBUtils.isResultSetEmpty(rs)) {
+				throw new NoRecordFoundException("enter a valid leave id");
+			}
+			while(rs.next()) {
+				ans=rs.getString(1);
+			}
+		}catch(SQLException ex) {
+			throw new SomeThingWrongException("try again later");
+		}finally {
+			try {
+				//close the exception
+				DBUtils.closeConnection(connection);				
+			}catch(SQLException sqlEX) {
+				
+			}
+		}
+		return ans;
 	}
 	
 }

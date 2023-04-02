@@ -13,9 +13,10 @@ public class Main {
 		System.out.println("3. Update a department name");
 		System.out.println("4. Add new Employee");
 		System.out.println("5. Change department of employee");
-		System.out.println("6. Approve or deny Leave request");
-		System.out.println("7. fire an employee");
-		System.out.println("8. view all users");
+		System.out.println("6. view all employee leave request");
+		System.out.println("7. Approve or deny Leave request");
+		System.out.println("8. fire an employee");
+		System.out.println("9. view all users");
 		System.out.println("0. logout");
 	}
 	
@@ -45,12 +46,15 @@ public class Main {
 					UserUI.changeDeptOfEmloyee(sc);
 					break;
 				case 6:
-//					categoryUI.searchCategoryById();
-					break;
+					UserUI.viewAllLeaveRequest();
+					break;	
 				case 7:
-					UserUI.deleteEmployeeByAdmin(sc);
+					UserUI.approveLeaveRequest(sc);
 					break;
 				case 8:
+					UserUI.deleteEmployeeByAdmin(sc);
+					break;
+				case 9:
 					UserUI.viewAllUser();
 					break;	
 				default:
@@ -76,8 +80,8 @@ public class Main {
 		System.out.println("1. update employee details");
 		System.out.println("2. change password");
 		System.out.println("3. apply for leave");
-		System.out.println("4. status of the leave");
-		System.out.println("5. history of the leave");
+		System.out.println("4. history of the leave");
+		System.out.println("5. status of the leave");
 		System.out.println("6. total salary of the month");
 		System.out.println("7. Annual salary of the financial year");
 		System.out.println("8. Delete account");
@@ -102,13 +106,13 @@ public class Main {
 					UserUI.changePassword(sc);
 					break;
 				case 3:
-//					orderUI.viewOrderDetails();
+					UserUI.applyLeave(sc);
 					break;
 				case 4:
-//					userUI.updateNameOfUser();
+					UserUI.historyOfLeave();
 					break;
 				case 5:
-//					userUI.changePassword();
+					UserUI.statusOfLeave(sc);
 					break;
 				case 6:
 					UserUI.monthSalary();

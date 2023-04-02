@@ -9,7 +9,10 @@ import com.masai.dao.DepartmentDAOImpl;
 import com.masai.dao.LoggedInUser;
 import com.masai.dao.UserDAO;
 import com.masai.dao.UserDAOImpl;
+import com.masai.dto.AllUserDTOImpl;
 import com.masai.dto.DepartmentDTO;
+import com.masai.dto.LeaveDTO;
+import com.masai.dto.LeaveDTOImpl;
 import com.masai.dto.UserDTO;
 import com.masai.dto.UserDTOImpl;
 import com.masai.exception.NoRecordFoundException;
@@ -67,7 +70,7 @@ public class UserUI {
 	public static void viewAllUser() {
 		UserDAO UserDAO=new UserDAOImpl();
 		try {
-			List<UserDTO> list = UserDAO.viewAllUser();
+			List<AllUserDTOImpl> list = UserDAO.viewAllUser();
 			list.forEach(System.out::println);
 		}catch(SomeThingWrongException|NoRecordFoundException ex) {
 			System.out.println(ex);
@@ -165,5 +168,78 @@ public class UserUI {
 			System.out.println(ex);
 		}
 	}
+
+	public static void applyLeave(Scanner sc) {
+		System.out.print("Enter leave id");
+		String leave_id = sc.next();
+		System.out.print("Enter leave type");
+		String leave_type = sc.next();
+		System.out.print("Enter number of days of leave");
+		int days = sc.nextInt();
+		
+		//create object for user with all details
+		LeaveDTO leaveDTO=new LeaveDTOImpl(leave_id, leave_type, days, "pending",0);
+		UserDAO UserDAO=new UserDAOImpl();
+		try {
+			UserDAO.applyLeave(leaveDTO);
+			System.out.println("leave applied successfully for "+LoggedInUser.LoggedInUserId);
+		}catch(SomeThingWrongException ex) {
+			System.out.println(ex);
+		}
+		
+	}
+
+	public static void viewAllLeaveRequest() {
+		UserDAO UserDAO=new UserDAOImpl();
+		try {
+			List<LeaveDTO> list = UserDAO.viewAllLeaveRequest();
+			list.forEach(System.out::println);
+		}catch(SomeThingWrongException|NoRecordFoundException ex) {
+			System.out.println(ex);
+		}
+	}
+
+	public static void approveLeaveRequest(Scanner sc) {
+		System.out.print("Enter leave id");
+		String leave_id = sc.next();
+		System.out.println("enter approve or deny");
+		int check=sc.nextInt();
+		UserDAO UserDAO=new UserDAOImpl();
+		try {
+			UserDAO.approveLeaveRequest(leave_id,check);
+			if(check==1) {
+				System.out.println("leave request approved");
+			}
+			else {
+				System.out.println("leave request denied");
+			}
+		}catch(SomeThingWrongException|NoRecordFoundException ex) {
+			System.out.println(ex);
+		}
+	}
+
+	public static void historyOfLeave() {
+		UserDAO UserDAO=new UserDAOImpl();
+		try {
+			List<LeaveDTO> list = UserDAO.historyOfLeave();
+			list.forEach(System.out::println);
+		}catch(SomeThingWrongException|NoRecordFoundException ex) {
+			System.out.println(ex);
+		}
+	}
+
+	public static void statusOfLeave(Scanner sc) {
+		System.out.println("enter leave id");
+		String leave_id = sc.next();
+		
+		UserDAO UserDAO=new UserDAOImpl();
+		try {
+			String ans = UserDAO.statusOfLeave(leave_id);
+			System.out.println(leave_id+" is "+ans);
+		}catch(SomeThingWrongException|NoRecordFoundException ex) {
+			System.out.println(ex);
+		}
+	}
+	
 	
 }
